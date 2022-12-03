@@ -111,6 +111,13 @@ func TestAndScore2(opp, me string) int {
 	}
 }
 
+type d2ll struct {
+	win    *d2ll
+	lose   *d2ll
+	points int
+	letter string
+}
+
 func Day2all() {
 	var day Day2
 	day.New()
