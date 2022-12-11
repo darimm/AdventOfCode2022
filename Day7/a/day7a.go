@@ -13,7 +13,7 @@ type Day7 struct {
 }
 
 func (d *Day7) New() {
-	lines, err := AOCFunctions.ReadFile(".\\Day7\\a\\day7sample.txt")
+	lines, err := AOCFunctions.ReadFile(".\\Day7\\a\\day7a.txt")
 	if err != nil {
 		panic("Could not read input")
 	}
@@ -83,22 +83,40 @@ func (d *Day7) PopulateFilesAndFolders() {
 	}
 	CalculateFoldserSize(&root)
 	fmt.Println(Test7a(&root))
+	fmt.Println("Root.Size: ", root.Size)
+	spaceneeded := (30000000 - (70000000 - root.Size))
+	fmt.Println("Space needed: ", spaceneeded)
+	fmt.Println(Test7b(&root, spaceneeded))
+}
+
+func Test7b(node *Node, spaceNeeded int) int {
+	var result int
+
+	myValue := spaceNeeded - node.Size
+	fmt.Println("My Value: ", myValue)
+	if node.Directories != nil {
+		for _, v := range node.Directories {
+			if spaceNeeded-v.Size < 0 && spaceNeeded-v.Size > myValue {
+				result = Test7b(v, spaceNeeded)
+			}
+		}
+	}
+	if result != 0 {
+		return result
+	}
+	return node.Size
 }
 
 func Test7a(node *Node) int {
-	if node.Parent != nil {
-		//if node.Parent.Size > 100000 && node.Size <= 100000 {
-		fmt.Println(node.Parent.Name, node.Name, node.Size)
-		//}
-	}
 	size := 0
-	if node.Directories != nil && node.Size > 100000 {
+	if node.Directories != nil {
 		for _, v := range node.Directories {
-			size += Test7a(v)
+			result := Test7a(v)
+			size += result
 		}
 	}
-	if node.Parent != nil && node.Size <= 100000 && node.Parent.Size > 100000 {
-		return node.Size
+	if node.Size <= 100000 {
+		return node.Size + size
 	}
 	return size
 }
